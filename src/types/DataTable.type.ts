@@ -339,27 +339,3 @@ export interface TableOperatorColumn {
   /** @property {string} header - 컬럼 헤더 */
   header: string;
 }
-
-/**
- * CSV 호환 가능한 타입을 정의하는 타입
- * @template T 원본 데이터 타입
- */
-export type CsvCompatible<T> = {
-  [K in keyof T]: string | number | boolean | null | undefined | Array<string | number | boolean | object>;
-};
-
-/**
- * CSV 필드를 정의하는 타입
- * @template T 데이터 타입
- * @template U 커스텀 필드 타입
- * @property {keyof T} key - CSV 필드의 키
- * @property {string} label - CSV 필드의 라벨
- * @property {(value: T[keyof T] | U, item?: CsvCompatible<T>) => string | number | boolean} [format] - 필드 값을 포맷팅하는 함수
- * @property {boolean} [passNull] - null 값을 포함할지 여부
- */
-export type CsvField<T, U> = {
-  key: keyof T;
-  label: string;
-  format?: (value: T[keyof T] | U, item?: CsvCompatible<T>) => string | number | boolean;
-  passNull?: boolean;
-};

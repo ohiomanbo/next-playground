@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./EmptyTable.module.css";
+import styles from "./EmptyTableBody.module.css";
 
 interface EmptyTableProps {
   height?: string;

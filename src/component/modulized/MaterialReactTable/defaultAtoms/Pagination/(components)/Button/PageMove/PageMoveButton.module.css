@@ -1,0 +1,24 @@
+
+.pageMoveButton {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.pageMoveButtonDisabled {
+  cursor: not-allowed;
+}
+
+.pageMoveButtonLeft {
+  border-radius: 6px 0 0 6px;
+  border-right: none;
+}
+
+.pageMoveButtonRight {
+  border-radius: 0 6px 6px 0;
+  border-left: none;
+}

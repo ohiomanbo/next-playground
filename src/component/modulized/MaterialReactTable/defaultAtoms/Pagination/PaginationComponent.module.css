@@ -1,0 +1,33 @@
+.customPaginationWrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  align-self: stretch;
+  margin-top: 8px;
+  height: 32px;
+}
+
+.pageInfoCationWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.pageMoveButtonWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: 32px;
+}
+
+.pageSizeControlWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+}
+
+.separator {
+  width: 1px;
+  height: 100%;
+}

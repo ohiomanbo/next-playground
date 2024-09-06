@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -12,10 +13,12 @@ import {
 import { ThemeProvider } from "@mui/material/styles";
 import { MRT_Localization_KO } from "material-react-table/locales/ko";
 import { Box, CircularProgress } from "@mui/material";
+
 import { defaultTheme } from "@/component/modulized/MaterialReactTable/mrtTheme";
 import { PaginatedDataTableProps } from "@/types/DataTable.type";
 import { checkTrueCount } from "@/utils/common";
 import EmptyTableBody from "@/component/modulized/MaterialReactTable/defaultAtoms/Empty/EmptyTableBody";
+import { PaginationComponent } from "@/component/modulized/MaterialReactTable/defaultAtoms/Pagination/PaginationComponent";
 
 const FadeOverlay = ({ isLoading, top, height }: { top: string; height: string; isLoading: boolean }) => {
   const [shouldRender, setShouldRender] = useState(isLoading);
@@ -163,15 +166,18 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
     return !!rowSelection[rowId];
   };
 
-  const columnOrder = useMemo(
-    () => [
-      "mrt-row-select",
-      "mrt-row-expand",
-      "rowIndex",
-      ...(columns.map((ele) => ele.accessorKey).filter((ele): ele is string => ele !== undefined) as string[]),
-    ],
-    [columns]
-  );
+  const [columnOrder, setColumnOrder] = useState([
+    "mrt-row-select",
+    "mrt-row-expand",
+    "rowIndex",
+    ...(columns.map((ele) => ele.accessorKey).filter((ele): ele is string => ele !== undefined) as string[]),
+  ]);
+
+  const [tableData, setTableData] = useState(() => data.data);
+
+  useEffect(() => {
+    setTableData(data.data);
+  }, [data]);
 
   const table = useMaterialReactTable({
     initialState: {
@@ -180,7 +186,7 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
       columnOrder,
     },
     columns,
-    data: data?.data ?? [],
+    data: tableData ?? [],
     state: {
       isLoading: false,
       pagination,
@@ -188,6 +194,11 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
       ...(sorting && { sorting }),
       rowSelection: rowSelection || {},
     },
+    enableRowOrdering: true,
+
+    enableColumnOrdering: true,
+    onColumnOrderChange: setColumnOrder,
+
     enableTopToolbar,
     enableBottomToolbar,
     enableGlobalFilter: false,
@@ -228,7 +239,7 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
       }
     },
     enableColumnResizing: enableCellResizing,
-    columnResizeMode: "onChange",
+    columnResizeMode: "onEnd",
     layoutMode: "grid",
     localization: MRT_Localization_KO,
     enableExpanding: enableRowExpanding,
@@ -249,6 +260,10 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
     onRowSelectionChange: handleRowSelectionChange,
     getRowId: resolveRowId,
     displayColumnDefOptions: {
+      "mrt-row-drag": {
+        header: "", // 여기서 컬럼명을 원하는 대로 변경할 수 있습니다.
+        size: 40, // 컬럼 크기 조정
+      },
       "mrt-row-select": {
         // Cell: ({ row }) => (
         //   <StyledTableCheckbox checked={isRowSelected(row.original)} onChange={row.getToggleSelectedHandler()} />
@@ -505,26 +520,15 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
     renderBottomToolbar: () => {
       if (!enableBottomToolbar) return <></>;
 
-      // return (
-      //   <DefaultPaginationComponent
-      //     pagination={pagination}
-      //     totalRowCount={data.count}
-      //     paginationStyle={paginationStyle}
-      //     pageSizeArr={pageSizeArr}
-      //     changePageSize={(newPageSize: number) => {
-      //       setPagination((prev) => {
-      //         const currentFirstItemIndex = prev.pageIndex * prev.pageSize;
-      //         const newPageIndex = Math.floor(currentFirstItemIndex / newPageSize);
-      //         return {
-      //           ...prev,
-      //           pageSize: newPageSize,
-      //           pageIndex: newPageIndex,
-      //         };
-      //       });
-      //     }}
-      //     onMove={(count: number) => setPagination((prev) => ({ ...prev, pageIndex: prev.pageIndex + count }))}
-      //   />
-      // );
+      return (
+        <PaginationComponent
+          pagination={pagination}
+          totalRowCount={data.totalCount}
+          paginationStyle={paginationStyle}
+          pageSizeArr={pageSizeArr}
+          setPagination={setPagination}
+        />
+      );
     },
   });
 
