@@ -1,5 +1,5 @@
-import { camelToSnakeConverter } from "@/utils/common";
-import { MRT_SortingState } from "material-react-table";
+import { camelToSnakeConverter } from "@/utils/common.util";
+import type { MRT_SortingState } from "material-react-table";
 
 export const orderDecomposer = <T>(sorting: MRT_SortingState) => {
   let orderingText = undefined;
