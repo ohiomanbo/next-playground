@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   MaterialReactTable,
@@ -12,7 +12,7 @@ import {
 } from "material-react-table";
 import { ThemeProvider } from "@mui/material/styles";
 import { MRT_Localization_KO } from "material-react-table/locales/ko";
-import { Box, Checkbox, Menu, MenuItem } from "@mui/material";
+import { Box, Checkbox, MenuItem } from "@mui/material";
 
 import EmptyTableBody from "@/Table/modulized/MaterialReactTable/defaultAtoms/Empty/EmptyTableBody";
 import FadeLoadingOverlay from "@/Table/modulized/MaterialReactTable/defaultAtoms/Loading/Loading";
@@ -20,11 +20,10 @@ import { PaginationComponent } from "@/Table/modulized/MaterialReactTable/defaul
 import type { PaginatedDataTableProps } from "@/types/table.type";
 
 import { defaultTheme } from "@/Table/modulized/MaterialReactTable/mrtTheme";
-import { deepEqual, getTrueCount } from "@/utils/common.util";
+import { getTrueCount } from "@/utils/common.util";
 import { applyStyleFixedSizeCellForCount, applyStyleWidthHeightOverflow } from "@/utils/style.util";
 import useTableRef from "@/app/hooks/useTableRef";
 import useRowSelection from "@/app/hooks/useRowSelection";
-import { Ultra } from "next/font/google";
 import { ContentCopy } from "@mui/icons-material";
 
 const PaginatedDataTable = <TData extends MRT_RowData>({
@@ -33,8 +32,8 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
   allColumns,
   columns,
   pagination,
+  columnVisibility,
   sorting,
-  hidingColumns, // 없애야됨
   enableExpanding = false,
   enableRowOrdering = true,
   enableColumnOrdering = true,
@@ -115,6 +114,7 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
       // 매번 새롭게 값을 넣어줘야 테이블에 반영이 되는중
       columnOrder: getColumnOrder(columns),
       // columnVisibility: hidingColumns, -> enableCellActions랑 충돌
+      columnVisibility: columnVisibility?.state ?? {},
       sorting: sorting?.state ?? [],
       rowSelection: rowSelection?.state ?? {},
     },
@@ -126,7 +126,11 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
     enableColumnFilters: false,
     enableFullScreenToggle: false,
     enableDensityToggle: false,
+
     enableHiding: true,
+    ...(columnVisibility?.setState && {
+      onColumnVisibilityChange: columnVisibility.setState, // 열 가시성 변경 핸들러
+    }),
 
     enableColumnActions,
     renderColumnActionsMenuItems: ({ column, table, closeMenu, internalColumnMenuItems }) => [
@@ -305,12 +309,13 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
     renderEmptyRowsFallback: () => <EmptyTableBody height={emptyHeight} />,
     renderTopToolbar: () => {
       if (!(enableTopToolbar && TopToolbarComponent)) return <></>;
-      return React.cloneElement(TopToolbarComponent as React.ReactElement, {
-        filteredRow: {
-          filteredCount: count,
-          totalCount: totalCount,
-        },
-      });
+      return TopToolbarComponent;
+      // return React.cloneElement(TopToolbarComponent as React.ReactElement, {
+      //   filteredRow: {
+      //     filteredCount: count,
+      //     totalCount: totalCount,
+      //   },
+      // });
     },
     renderBottomToolbar: () => {
       if (!enableBottomToolbar) return <></>;

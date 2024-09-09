@@ -7,7 +7,7 @@ const ToggleSwitchButton = ({
   setToggleState,
   showLabel = true,
 }: {
-  label: string;
+  label?: string;
   toggleState: boolean;
   setToggleState: React.Dispatch<React.SetStateAction<boolean>>;
   showLabel?: boolean;

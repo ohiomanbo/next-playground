@@ -6,18 +6,20 @@ import type { PaginatedResponse, User } from "@/app/api/table/users/route";
 import { PaginatedDataTable } from "@/Table/modulized/MaterialReactTable/PaginatedDataTable";
 import type { ColumnDefArray } from "@/types/column.type";
 import withDataTable, { type WithDataTableProps } from "@/hoc/Table/WithDataTable";
-import { Modal } from "@mui/material";
 
-import Controls from "@/Table/example/DataTable/Controls";
+import Controls from "@/Table/example/components/Controls";
 import { createColumn, createTableIndexNumberColum } from "@/utils/DataTableColumn.util";
-import DrawerAddColumn from "@/Table/example/DataTable/DrawerAddColumn";
-import DrawerDeleteColumn from "@/Table/example/DataTable/DrawerDeleteColumn";
+import Modal from "@/components/Modal";
+import DrawerDeleteColumn from "@/Table/example/components/DrawerDeleteColumn";
+import DrawerAddColumn from "@/Table/example/components/DrawerAddColumn";
+import ModalHidingColumn from "@/Table/example/components/ModalHidingColumn";
 
 // Define columns
 const allColumns = [
   { accessorKey: "firstName", header: "First Name" },
   { accessorKey: "lastName", header: "Last Name" },
   { accessorKey: "age", header: "Age" },
+  { accessorKey: "gender", header: "Gender" },
 ];
 
 interface ExampleDataTableProps extends WithDataTableProps {
@@ -50,7 +52,7 @@ const ExampleDataTable: React.FC<ExampleDataTableProps> = ({
       accessorKey: "lastName",
       header: "Last Name",
       type: "string",
-      enableResizing: false,
+      enableResizing: true,
       showBrowserTooltip: true,
       size: 228,
     }),
@@ -58,7 +60,15 @@ const ExampleDataTable: React.FC<ExampleDataTableProps> = ({
       accessorKey: "age",
       header: "Age",
       type: "number",
-      enableResizing: false,
+      enableResizing: true,
+      showBrowserTooltip: true,
+      size: 228,
+    }),
+    createColumn<User>({
+      accessorKey: "gender",
+      header: "Gender",
+      type: "string",
+      enableResizing: true,
       showBrowserTooltip: true,
       size: 228,
     }),
@@ -67,10 +77,6 @@ const ExampleDataTable: React.FC<ExampleDataTableProps> = ({
   const [data, setData] = useState<PaginatedResponse<User> | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    console.log(rowSelectionConfig?.rowSelection);
-  }, [rowSelectionConfig?.rowSelection]);
 
   // Fetch data from the API
   const fetchData = async () => {
@@ -94,6 +100,18 @@ const ExampleDataTable: React.FC<ExampleDataTableProps> = ({
     fetchData();
   }, [paginationConfig?.pagination, sortingConfig?.sorting, columns]);
 
+  const [columnVisibility, setColumnVisibility] = useState<{ [key: string]: boolean }>({ gender: false });
+  const [showHidingColumnsModal, setShowHidingColumnsModal] = useState(false);
+
+  const hideColumn = (key: string) => {
+    setColumnVisibility((prevVisibility) => ({
+      ...prevVisibility,
+      [key]: prevVisibility[key] === false ? true : prevVisibility[key], // key가 존재하면 true로 설정
+    }));
+  };
+
+  const hiddenColumns = Object.keys(columnVisibility).filter((key) => columnVisibility[key] === false);
+
   return (
     <>
       {/* Paginated Data Table */}
@@ -105,6 +123,10 @@ const ExampleDataTable: React.FC<ExampleDataTableProps> = ({
         pagination={{
           state: paginationConfig.pagination,
           setState: paginationConfig.setPagination,
+        }}
+        columnVisibility={{
+          state: columnVisibility,
+          setState: setColumnVisibility,
         }}
         {...(sortingConfig && {
           sorting: {
@@ -141,6 +163,7 @@ const ExampleDataTable: React.FC<ExampleDataTableProps> = ({
               gap: "10px",
             }}
           >
+            <button onClick={() => setShowHidingColumnsModal(true)}>control Hiding Columns</button>
             <button
               onClick={() =>
                 setDrawerInfo &&
@@ -170,37 +193,28 @@ const ExampleDataTable: React.FC<ExampleDataTableProps> = ({
       />
 
       {/* ===== Table external components ===== */}
-      {/* Create Group Modal */}
-      {modalConfig?.createGroup && (
-        <Modal open={modalConfig.createGroup.show} onClose={() => modalConfig.createGroup?.setShow(false)}>
-          <div>Group Creation Modal</div>
-        </Modal>
-      )}
-
-      {/* Deploy Modal */}
-      {modalConfig?.deploy && (
-        <Modal open={modalConfig.deploy.show} onClose={() => modalConfig.deploy?.setShow(false)}>
-          <div>Deploy Modal</div>
-        </Modal>
-      )}
+      <Modal showModal={showHidingColumnsModal} onClose={() => setShowHidingColumnsModal(false)}>
+        <ModalHidingColumn
+          columns={columns}
+          hiddenColumns={hiddenColumns}
+          hideColumn={hideColumn}
+          onClose={() => setShowHidingColumnsModal(false)}
+        />
+      </Modal>
 
       {/* Drawer */}
+      {/*  <Drawer open={drawerInfo.show} onClose={clearingDrawer} anchor="right">
+           <div>
+             <h2>Drawer Content for {drawerInfo.name}</h2>
+             <Button onClick={clearingDrawer}>Close Drawer</Button>
+           </div>
+         </Drawer> */}
+
       {drawerInfo && setDrawerInfo && drawerInfo?.name === "addColumn" && (
-        // <Drawer open={drawerInfo.show} onClose={clearingDrawer} anchor="right">
-        //   <div>
-        //     <h2>Drawer Content for {drawerInfo.name}</h2>
-        //     <Button onClick={clearingDrawer}>Close Drawer</Button>
-        //   </div>
-        // </Drawer>
         <DrawerAddColumn drawerInfo={drawerInfo} clearingDrawer={clearingDrawer} setColumns={setColumns} />
       )}
+
       {drawerInfo && setDrawerInfo && drawerInfo?.name === "deleteColumn" && (
-        // <Drawer open={drawerInfo.show} onClose={clearingDrawer} anchor="right">
-        //   <div>
-        //     <h2>Drawer Content for {drawerInfo.name}</h2>
-        //     <Button onClick={clearingDrawer}>Close Drawer</Button>
-        //   </div>
-        // </Drawer>
         <DrawerDeleteColumn
           columns={columns}
           drawerInfo={drawerInfo}

@@ -52,11 +52,6 @@ export interface DataTableProps<TData extends MRT_RowData> extends DataTableStyl
   allColumns: TableColumnIdentify[];
 
   /**
-   * @property {MRT_VisibilityState} [hidingColumns] - 현재 숨겨진 컬럼들의 상태를 나타냅니다.
-   */
-  hidingColumns?: MRT_VisibilityState;
-
-  /**
    * @property {(row: MRT_Row<TData>) => void} [rowClick] - 행이 클릭되었을 때 실행될 함수입니다.
    * @param row 클릭된 행의 데이터
    */
@@ -67,6 +62,15 @@ export interface DataTableProps<TData extends MRT_RowData> extends DataTableStyl
    * @param row 행 데이터
    */
   getRowId?: (row: TData) => string;
+
+  columnVisibility?: {
+    state: { [key: string]: boolean };
+    setState: React.Dispatch<
+      React.SetStateAction<{
+        [key: string]: boolean;
+      }>
+    >;
+  };
 
   sorting?: {
     /**
@@ -358,7 +362,6 @@ type MergedProps<T extends MRT_RowData, O extends string | undefined> = Omit<
   | "isLoading"
   | "sorting"
   | "setSorting"
-  | "hidingColumns"
   | "cellResetClicked"
   | "enableExpanding"
   | "enableRowSelection"
