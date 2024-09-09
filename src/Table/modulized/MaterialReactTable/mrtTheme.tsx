@@ -17,6 +17,15 @@ const defaultTheme: Theme = createTheme({
         },
       },
     },
+    MuiTableContainer: {
+      styleOverrides: {
+        root: {
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+        },
+      },
+    },
     MuiTable: {
       styleOverrides: {
         root: {
@@ -170,6 +179,7 @@ const defaultTheme: Theme = createTheme({
           /** thead */
           minHeight: "30px",
           boxShadow: "none",
+          opacity: 1,
         },
       },
     },
@@ -179,10 +189,14 @@ const defaultTheme: Theme = createTheme({
           /** tbody */
           boxShadow: "none",
           opacity: 1,
+          minHeight: "600px", // 추가된 부분
+          display: "flex !important", // 추가된 부분
+          flexDirection: "column", // 추가된 부분
 
           "& .MuiTableRow-root": {
             /** tbody > tr */
             backgroundColor: "transparent !important", // #fff 주입되어서 강제로 덮어씀
+            flex: "0 0 auto !important",
 
             "& td": {},
           },
@@ -192,6 +206,9 @@ const defaultTheme: Theme = createTheme({
             minHeight: "0 !important",
             padding: "0 !important", // MuiTableCell > root, body의 우선순위가 높음
             margin: "0",
+            "& td:first-of-type, td:nth-of-type(2)": {
+              maxWidth: "unset !important",
+            },
           },
 
           /** tbody > tr hover & selected background color */

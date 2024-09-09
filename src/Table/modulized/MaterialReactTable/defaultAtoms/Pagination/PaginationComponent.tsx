@@ -4,8 +4,8 @@ import type { MRT_PaginationState } from "material-react-table";
 import {
   Dropdown,
   DropdownOption,
-} from "@/component/modulized/MaterialReactTable/defaultAtoms/Pagination/(tempComponents)/Dropdown";
-import PageMoveButton from "@/component/modulized/MaterialReactTable/defaultAtoms/Pagination/(components)/Button/PageMove/PageMoveButton";
+} from "@/Table/modulized/MaterialReactTable/defaultAtoms/Pagination/(tempComponents)/Dropdown";
+import PageMoveButton from "@/Table/modulized/MaterialReactTable/defaultAtoms/Pagination/(components)/Button/PageMove/PageMoveButton";
 
 import styles from "./PaginationComponent.module.css";
 

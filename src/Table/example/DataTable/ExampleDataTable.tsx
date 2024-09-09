@@ -2,13 +2,23 @@
 
 import React, { useEffect, useState } from "react";
 import type { PaginatedResponse, User } from "@/app/api/table/users/route";
-import { PaginatedDataTable } from "@/component/modulized/MaterialReactTable/PaginatedDataTable";
+
+import { PaginatedDataTable } from "@/Table/modulized/MaterialReactTable/PaginatedDataTable";
+import type { ColumnDefArray } from "@/types/column.type";
 import withDataTable, { type WithDataTableProps } from "@/hoc/Table/WithDataTable";
-import type { MRT_ColumnDef } from "material-react-table";
 import { Button, Modal, Drawer } from "@mui/material";
 
+import { Toggle, JsonToggle } from "@/components/Toggle/Toggle";
+
 // Define columns
-const columns: MRT_ColumnDef<User>[] = [
+const allColumns = [
+  { accessorKey: "firstName", header: "First Name" },
+  { accessorKey: "lastName", header: "Last Name" },
+  { accessorKey: "age", header: "Age" },
+];
+
+// Define columns
+const columns: ColumnDefArray<User> = [
   { accessorKey: "firstName", header: "First Name" },
   { accessorKey: "lastName", header: "Last Name" },
   { accessorKey: "age", header: "Age", size: 100 },
@@ -30,6 +40,10 @@ const ExampleDataTable: React.FC<ExampleDataTableProps> = ({
   const [data, setData] = useState<PaginatedResponse<User> | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    console.log(rowSelectionConfig?.rowSelection);
+  }, [rowSelectionConfig?.rowSelection]);
 
   // Fetch data from the API
   const fetchData = async () => {
@@ -57,16 +71,26 @@ const ExampleDataTable: React.FC<ExampleDataTableProps> = ({
     <>
       {/* Paginated Data Table */}
       <PaginatedDataTable
-        data={data || { data: [], count: 0, totalCount: 0, isNext: false }}
         columns={columns}
+        allColumns={allColumns}
         isLoading={isLoading}
-        pagination={paginationConfig?.pagination}
-        setPagination={paginationConfig?.setPagination}
-        sorting={sortingConfig?.sorting}
-        setSorting={sortingConfig?.setSorting}
-        rowSelection={rowSelectionConfig?.rowSelection}
-        setRowSelection={rowSelectionConfig?.setRowSelection}
-        emptyHeight="300px"
+        dataResponse={data || { data: [], count: 0, totalCount: 0, isNext: false }}
+        pagination={{
+          state: paginationConfig.pagination,
+          setState: paginationConfig.setPagination,
+        }}
+        {...(sortingConfig && {
+          sorting: {
+            state: sortingConfig.sorting,
+            setState: sortingConfig.setSorting,
+          },
+        })}
+        {...(rowSelectionConfig && {
+          rowSelection: {
+            state: rowSelectionConfig.rowSelection,
+            setState: rowSelectionConfig.setRowSelection,
+          },
+        })}
       />
 
       {/* Create Group Modal */}
@@ -92,6 +116,14 @@ const ExampleDataTable: React.FC<ExampleDataTableProps> = ({
           </div>
         </Drawer>
       )}
+      <Toggle title="Table api">
+        <JsonToggle
+          data={{
+            title: "all columns",
+            content: JSON.stringify(allColumns, null, 2),
+          }}
+        />
+      </Toggle>
     </>
   );
 };
