@@ -1,4 +1,4 @@
-import type { DropdownOption } from "@/Table/modulized/MaterialReactTable/defaultAtoms/Pagination/(tempComponents)/Dropdown";
+import type { DropdownOption } from "@/components/Dropdown/Dropdown";
 
 /** ===== filter 정의 ====== */
 export const operatorSet = [

@@ -1,4 +1,4 @@
-import ExampleDataTable from "@/component/example/DataTable/ExampleDataTable";
+import ExampleDataTable from "@/Table/example/DataTable/ExampleDataTable";
 
 export default function Home() {
   return (

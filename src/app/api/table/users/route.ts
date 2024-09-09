@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export interface User {
+  idx: number;
   firstName: string;
   lastName: string;
   age: number;
@@ -20,10 +21,11 @@ function generateDummyUsers(count: number) {
   const users: User[] = [];
 
   for (let i = 0; i < count; i++) {
+    const idx = i;
     const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
     const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
     const age = Math.floor(Math.random() * 50) + 18; // 18 ~ 67 사이의 나이
-    users.push({ firstName, lastName, age });
+    users.push({ idx, firstName, lastName, age });
   }
 
   return users;
