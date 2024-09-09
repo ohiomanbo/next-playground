@@ -110,9 +110,9 @@ export interface DataTableProps<TData extends MRT_RowData> extends DataTableStyl
   enableTopToolbar?: boolean;
 
   /**
-   * @property {boolean} [enableCellResizing] - 사용자가 셀의 크기를 조정할 수 있는지 여부를 결정합니다.
+   * @property {boolean} [enableColumnResizing] - 사용자가 컬럼의 크기를 조정할 수 있는지 여부를 결정합니다.
    */
-  enableCellResizing?: boolean;
+  enableColumnResizing?: boolean;
 
   /**
    * @property {boolean} [enableExpanding] - 행을 확장하여 추가 정보를 표시할 수 있는지 여부를 결정합니다.
@@ -128,6 +128,26 @@ export interface DataTableProps<TData extends MRT_RowData> extends DataTableStyl
    * @property {boolean} [enableRowNumbering] - 각 행에 번호를 표시할지 여부를 결정합니다.
    */
   enableRowNumbering?: boolean;
+
+  /**
+   * @property {boolean} [enableRowOrdering] - 각 행 drag & drop 가능 여부를 결정합니다.
+   */
+  enableRowOrdering?: boolean;
+
+  /**
+   * @property {boolean} [enableColumnOrdering] - 각 열 drag & drop 가능 여부를 결정합니다.
+   */
+  enableColumnOrdering?: boolean;
+
+  /**
+   * @property {boolean} [enableColumnActions] - 각 열의 actions 여부를 결정합니다.
+   */
+  enableColumnActions?: boolean;
+
+  /**
+   * @property {boolean} [enableClickToCopy] - 각 cell의 copyable 여부를 결정합니다.
+   */
+  enableClickToCopy?: boolean;
 
   /**
    * @property {React.ReactNode} [topToolbarComponent] - 테이블 상단에 표시할 커스텀 툴바 컴포넌트입니다.
@@ -285,8 +305,8 @@ export interface CommonDataTableProps<T extends MRT_RowData, O extends string | 
   /** @property {number} [initialPageSize] - 초기 페이지 크기 */
   initialPageSize?: number;
 
-  /** @property {boolean} [enableCellResize] - 셀 크기 조정 활성화 여부 */
-  enableCellResize?: boolean;
+  /** @property {boolean} [enableColumnResizing] - 셀 크기 조정 활성화 여부 */
+  enableColumnResizing?: boolean;
 
   /** @property {boolean} [enableRowNumbering] - 행 번호 표시 활성화 여부 */
   enableRowNumbering?: boolean;

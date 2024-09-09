@@ -5,6 +5,7 @@ export interface User {
   firstName: string;
   lastName: string;
   age: number;
+  gender: "male" | "female";
 }
 
 export interface PaginatedResponse<T> {
@@ -25,7 +26,8 @@ function generateDummyUsers(count: number) {
     const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
     const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
     const age = Math.floor(Math.random() * 50) + 18; // 18 ~ 67 사이의 나이
-    users.push({ idx, firstName, lastName, age });
+    const gender = Math.random() < 0.5 ? "male" : "female"; // 성별을 랜덤으로 지정
+    users.push({ idx, firstName, lastName, age, gender });
   }
 
   return users;

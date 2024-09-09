@@ -1,0 +1,44 @@
+.switch {
+  display: flex;
+  align-items: center;
+  color:black;
+}
+
+.checkbox {
+  display: none;
+}
+
+.slider {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  border-radius: 50%;
+  top: 1px;
+  left: 1px;
+  transition: transform 0.2s;
+}
+
+.checkbox:checked + .slider {
+  background-color: #4caf50;
+}
+
+.checkbox:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.label {
+  margin-left: 10px;
+  font-size: 14px;
+}

@@ -67,10 +67,12 @@ export interface TableColumnIdentify {
   header: string;
 }
 
+export type ColumnType = "string" | "number" | "date" | "boolean";
+
 /** table column define */
 export type ColumnFilterInfo = {
   /** @property {"string" | "number" | "date" | "boolean"} [type] - 컬럼 필터의 데이터 타입 */
-  type?: "string" | "number" | "date" | "boolean";
+  type?: ColumnType;
   /** @property {string} [placeholder] - 필터 입력의 플레이스홀더 */
   placeholder?: string;
   /** @property {OperatorAccessorKey[]} [disabledOperators] - 비활성화된 연산자 목록 */

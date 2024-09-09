@@ -1,0 +1,24 @@
+/* MultiLineEllipsis.module.css */
+.styledText {
+  width: 100%;
+  word-break: break-word;
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preWrap {
+  white-space: pre-wrap;
+}
+
+.nowrap {
+  white-space: nowrap;
+  display: block;
+}
+
+.multiline {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   MaterialReactTable,
@@ -8,12 +8,11 @@ import {
   type MRT_TableInstance,
   type MRT_SortingState,
   type MRT_RowData,
-  MRT_ActionMenuItem,
-  MRT_ToggleFullScreenButton,
+  MRT_ColumnDef,
 } from "material-react-table";
 import { ThemeProvider } from "@mui/material/styles";
 import { MRT_Localization_KO } from "material-react-table/locales/ko";
-import { Box, Checkbox, Divider, MenuItem } from "@mui/material";
+import { Box, Checkbox, Menu, MenuItem } from "@mui/material";
 
 import EmptyTableBody from "@/Table/modulized/MaterialReactTable/defaultAtoms/Empty/EmptyTableBody";
 import FadeLoadingOverlay from "@/Table/modulized/MaterialReactTable/defaultAtoms/Loading/Loading";
@@ -21,30 +20,37 @@ import { PaginationComponent } from "@/Table/modulized/MaterialReactTable/defaul
 import type { PaginatedDataTableProps } from "@/types/table.type";
 
 import { defaultTheme } from "@/Table/modulized/MaterialReactTable/mrtTheme";
-import { getTrueCount } from "@/utils/common.util";
+import { deepEqual, getTrueCount } from "@/utils/common.util";
 import { applyStyleFixedSizeCellForCount, applyStyleWidthHeightOverflow } from "@/utils/style.util";
 import useTableRef from "@/app/hooks/useTableRef";
 import useRowSelection from "@/app/hooks/useRowSelection";
-import { Email, PersonOffOutlined } from "@mui/icons-material";
+import { Ultra } from "next/font/google";
+import { ContentCopy } from "@mui/icons-material";
 
 const PaginatedDataTable = <TData extends MRT_RowData>({
   dataResponse,
   isLoading,
+  allColumns,
   columns,
   pagination,
   sorting,
-  hidingColumns,
+  hidingColumns, // 없애야됨
   enableExpanding = false,
+  enableRowOrdering = true,
+  enableColumnOrdering = true,
+  enableColumnActions = true,
   enableRowSelection = true,
-  enableCellResizing = true,
+  enableColumnResizing = true,
   enableRowNumbering = false,
   enableTopToolbar = true,
   enableBottomToolbar = true,
+  enableClickToCopy = true,
   isResetCellSizeClicked = false,
   rowClick,
   emptyHeight,
   mrtPaperStyles,
   mrtContainerStyles,
+  mrtTableStyles,
   mrtTableBodyStyles,
   rowSelection,
   detailPanelComponent: DetailPanelComponent,
@@ -61,12 +67,24 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
     setRowSelection: rowSelection?.setState,
   });
 
+  // 추후 열 순서 변경 기능을 사용할 때 추적하기 위해서 우선은 남겨두는 상태.
   const [columnOrder, setColumnOrder] = useState([
     "mrt-row-select",
     "mrt-row-expand",
     "rowIndex",
     ...(columns.map((ele) => ele.accessorKey).filter((ele): ele is string => ele !== undefined) as string[]),
   ]);
+
+  const getColumnOrder = (cols: MRT_ColumnDef<TData>[]) => {
+    const defaultOrder = ["mrt-row-select", "mrt-row-expand", "rowIndex"];
+    const accessorKeys = cols.map((col) => col.accessorKey || col.id).filter((key): key is string => key !== undefined);
+    return [...defaultOrder, ...accessorKeys];
+  };
+
+  useEffect(() => {
+    const newColumnOrder = getColumnOrder(columns);
+    setColumnOrder(newColumnOrder);
+  }, [columns]);
 
   const [tableData, setTableData] = useState(() => data);
 
@@ -94,7 +112,8 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
     state: {
       isLoading: false,
       pagination: paginationState,
-      columnOrder,
+      // 매번 새롭게 값을 넣어줘야 테이블에 반영이 되는중
+      columnOrder: getColumnOrder(columns),
       // columnVisibility: hidingColumns, -> enableCellActions랑 충돌
       sorting: sorting?.state ?? [],
       rowSelection: rowSelection?.state ?? {},
@@ -109,74 +128,95 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
     enableDensityToggle: false,
     enableHiding: true,
 
-    enableColumnActions: true,
-    renderColumnActionsMenuItems: ({ column, table }) => {
-      // Move these checks inside the render function
-      const isAnyColumnHidden = table.getAllColumns().some((col) => !col.getIsVisible());
-      const hasColumnSizeChanged = column.getSize() !== column.columnDef.size;
+    enableColumnActions,
+    renderColumnActionsMenuItems: ({ column, table, closeMenu, internalColumnMenuItems }) => [
+      ...internalColumnMenuItems,
+      <MenuItem
+        key="custom-1"
+        onClick={() => {
+          console.log("Custom Action 1");
+          closeMenu();
+        }}
+      >
+        Custom Action 1
+      </MenuItem>,
+      <MenuItem
+        key="custom-2"
+        onClick={() => {
+          console.log("Custom Action 2");
+          closeMenu();
+        }}
+      >
+        Custom Action 2
+      </MenuItem>,
+    ],
+    // renderColumnActionsMenuItems: ({ column, table }) => {
+    //   // Move these checks inside the render function
+    //   const isAnyColumnHidden = table.getAllColumns().some((col) => !col.getIsVisible());
+    //   const hasColumnSizeChanged = column.getSize() !== column.columnDef.size;
 
-      return [
-        // 정렬 초기화
-        <MenuItem key="clear-sort" onClick={() => column.clearSorting()} disabled={!column.getIsSorted()}>
-          정렬 초기화
-        </MenuItem>,
-        // 오름차순 정렬
-        <MenuItem key="sort-asc" onClick={() => column.toggleSorting(false)}>
-          오름차순 정렬
-        </MenuItem>,
-        // 내림차순 정렬
-        <MenuItem key="sort-desc" onClick={() => column.toggleSorting(true)}>
-          내림차순 정렬
-        </MenuItem>,
-        // 구분선
-        <Divider key="divider-1" />,
-        // 열 크기 초기화
-        <MenuItem key="reset-size" onClick={() => column.resetSize()} disabled={!hasColumnSizeChanged}>
-          열 크기 초기화
-        </MenuItem>,
-        // 숨기기
-        <MenuItem key="hide" onClick={() => column.toggleVisibility(false)}>
-          숨기기
-        </MenuItem>,
-        // 모든 열 보이기
-        <MenuItem key="show-all" onClick={() => table.setColumnVisibility({})} disabled={!isAnyColumnHidden}>
-          모든 열 보이기
-        </MenuItem>,
-        // 구분선
-        <Divider key="divider-2" />,
-        // 여기서부터 커스텀 버튼
-        <MenuItem
-          key="custom-action-1"
-          onClick={() => {
-            // 커스텀 액션 1 로직
-            console.log("Custom action 1 for column:", column.id);
-          }}
-        >
-          커스텀 액션 1
-        </MenuItem>,
-        <MenuItem
-          key="custom-action-2"
-          onClick={async () => {
-            // 커스텀 액션 2 로직 (비동기)
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            console.log("Custom action 2 for column:", column.id);
-          }}
-        >
-          커스텀 액션 2
-        </MenuItem>,
-      ];
-    },
+    //   return [
+    //     // 정렬 초기화
+    //     <MenuItem key="clear-sort" onClick={() => column.clearSorting()} disabled={!column.getIsSorted()}>
+    //       정렬 초기화
+    //     </MenuItem>,
+    //     // 오름차순 정렬
+    //     <MenuItem key="sort-asc" onClick={() => column.toggleSorting(false)}>
+    //       오름차순 정렬
+    //     </MenuItem>,
+    //     // 내림차순 정렬
+    //     <MenuItem key="sort-desc" onClick={() => column.toggleSorting(true)}>
+    //       내림차순 정렬
+    //     </MenuItem>,
+    //     // 구분선
+    //     <Divider key="divider-1" />,
+    //     // 열 크기 초기화
+    //     <MenuItem key="reset-size" onClick={() => column.resetSize()} disabled={!hasColumnSizeChanged}>
+    //       열 크기 초기화
+    //     </MenuItem>,
+    //     // 숨기기
+    //     <MenuItem key="hide" onClick={() => column.toggleVisibility(false)}>
+    //       숨기기
+    //     </MenuItem>,
+    //     // 모든 열 보이기
+    //     <MenuItem key="show-all" onClick={() => table.setColumnVisibility({})} disabled={!isAnyColumnHidden}>
+    //       모든 열 보이기
+    //     </MenuItem>,
+    //     // 구분선
+    //     <Divider key="divider-2" />,
+    //     // 여기서부터 커스텀 버튼
+    //     <MenuItem
+    //       key="custom-action-1"
+    //       onClick={() => {
+    //         // 커스텀 액션 1 로직
+    //         console.log("Custom action 1 for column:", column.id);
+    //       }}
+    //     >
+    //       커스텀 액션 1
+    //     </MenuItem>,
+    //     <MenuItem
+    //       key="custom-action-2"
+    //       onClick={async () => {
+    //         // 커스텀 액션 2 로직 (비동기)
+    //         await new Promise((resolve) => setTimeout(resolve, 1000));
+    //         console.log("Custom action 2 for column:", column.id);
+    //       }}
+    //     >
+    //       커스텀 액션 2
+    //     </MenuItem>,
+    //   ];
+    // },
 
     enableTopToolbar,
     enableBottomToolbar,
 
     /** order 변경 여부 */
-    enableRowOrdering: true,
-    enableColumnOrdering: true,
+    enableRowOrdering,
+    enableColumnOrdering,
     onColumnOrderChange: setColumnOrder,
 
     /** column resize */
-    enableColumnResizing: enableCellResizing,
+    enableColumnResizing,
     columnResizeMode: "onEnd",
 
     /** pagination */
@@ -285,9 +325,22 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
         />
       );
     },
+    enableClickToCopy,
+    muiCopyButtonProps: {
+      sx: {
+        margin: "0",
+        padding: "0",
+        width: "auto",
+        cursor: "default",
+      },
+      startIcon: <ContentCopy />,
+    },
 
     /** style */
-    muiTablePaperProps: { sx: applyStyleWidthHeightOverflow(mrtPaperStyles) },
+
+    muiTablePaperProps: {
+      sx: applyStyleWidthHeightOverflow(mrtPaperStyles),
+    },
     muiTableContainerProps: {
       ref: tableContainerRef,
       sx: applyStyleWidthHeightOverflow(mrtContainerStyles),
@@ -295,6 +348,7 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
     muiTableProps: {
       sx: {
         "& .MuiTableRow-head": {
+          ...(mrtTableStyles?.tableHeadMargin && { margin: mrtTableStyles.tableHeadMargin }),
           "& .MuiTableCell-head": {
             padding: `${tableStyle?.cellStyle?.headCellPadding ?? "2px 4px"} !important`,
           },

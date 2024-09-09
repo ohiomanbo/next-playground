@@ -18,19 +18,17 @@ const Toggle = ({ title, children }: { title?: string; children?: React.ReactNod
   );
 };
 
-const JsonToggle = ({
+const NotionLikeToggle = ({
   data,
 }: {
   data: {
     title: string;
-    content: string;
+    content: React.ReactNode;
   };
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleContent = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleContent = () => setIsOpen(!isOpen);
 
   return (
     <div>
@@ -58,4 +56,4 @@ const JsonToggle = ({
   );
 };
 
-export { Toggle, JsonToggle };
+export { Toggle, NotionLikeToggle };
