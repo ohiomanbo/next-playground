@@ -11,7 +11,6 @@ import type {
   MRT_RowSelectionState,
   MRT_SortingState,
   MRT_TableInstance,
-  MRT_VisibilityState,
 } from "material-react-table";
 
 /** ==== material react table 기능 ===== */

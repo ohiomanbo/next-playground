@@ -21,6 +21,8 @@ const Separator: React.FC<SeparatorProps> = React.memo(({ $isFirstPage = false, 
   />
 ));
 
+Separator.displayName = "Separator";
+
 interface DefaultPaginationComponentProps {
   pagination: {
     pageIndex: number;

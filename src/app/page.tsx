@@ -1,3 +1,4 @@
+import React from "react";
 import ExampleDataTable from "@/Table/example/DataTable/ExampleDataTable";
 
 export default function Home() {

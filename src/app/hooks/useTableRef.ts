@@ -35,8 +35,8 @@ const useTableRef = <T extends MRT_RowData>({ dataResponse, setRowSelection }: U
   const tableContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (tableContainerRef.current) {
-      setRowSelection && setRowSelection({});
+    if (tableContainerRef.current && setRowSelection) {
+      setRowSelection({});
     }
   }, [setRowSelection]);
 

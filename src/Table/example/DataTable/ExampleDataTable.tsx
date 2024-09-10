@@ -14,39 +14,8 @@ import DrawerDeleteColumn from "@/Table/example/components/DrawerDeleteColumn";
 import DrawerAddColumn from "@/Table/example/components/DrawerAddColumn";
 import ModalHidingColumn from "@/Table/example/components/ModalHidingColumn";
 
-// Define columns
-const allColumns = [
-  { accessorKey: "firstName", header: "First Name" },
-  { accessorKey: "lastName", header: "Last Name" },
-  { accessorKey: "age", header: "Age" },
-  { accessorKey: "gender", header: "Gender" },
-];
-
-interface ExampleDataTableProps extends WithDataTableProps {
-  // Additional Props if necessary
-}
-
-const ExampleDataTable: React.FC<ExampleDataTableProps> = ({
-  rowSelectionConfig,
-  modalConfig,
-  drawerInfo,
-  setDrawerInfo,
-  clearingDrawer,
-  paginationConfig = { pagination: { pageIndex: 0, pageSize: 20 }, setPagination: () => {} },
-  sortingConfig = { sorting: [], setSorting: () => {} },
-}) => {
-  const [enableRowNumbering, setEnableRowNumbering] = useState(false);
-  const [enableExpanding, setEnableExpanding] = useState(false);
-  const [enableRowSelection, setEnableRowSelection] = useState(true);
-  const [enableColumnResizing, setEnableColumnResizing] = useState(true);
-  const [enableRowOrdering, setEnableRowOrdering] = useState(false);
-  const [enableColumnOrdering, setEnableColumnOrdering] = useState(false);
-  const [enableColumnActions, setEnableColumnActions] = useState(true);
-  const [enableClickToCopy, setEnableClickToCopy] = useState(true);
-
-  // Define columns
-  const [columns, setColumns] = useState<ColumnDefArray<User>>(() => [
-    ...(enableRowNumbering ? [createTableIndexNumberColum<User>()] : []),
+const createColumns = (enableRowNumbering: boolean): ColumnDefArray<User> => {
+  const commonColumns = [
     { accessorKey: "firstName", header: "First Name" },
     createColumn<User>({
       accessorKey: "lastName",
@@ -55,6 +24,7 @@ const ExampleDataTable: React.FC<ExampleDataTableProps> = ({
       enableResizing: true,
       showBrowserTooltip: true,
       size: 228,
+      enableEditing: true, // 이 컬럼은 편집 가능
     }),
     createColumn<User>({
       accessorKey: "age",
@@ -72,33 +42,71 @@ const ExampleDataTable: React.FC<ExampleDataTableProps> = ({
       showBrowserTooltip: true,
       size: 228,
     }),
-  ]);
+  ];
+
+  return enableRowNumbering ? [createTableIndexNumberColum<User>(), ...commonColumns] : commonColumns;
+};
+
+// Define columns
+const allColumns = [
+  { accessorKey: "firstName", header: "First Name" },
+  { accessorKey: "lastName", header: "Last Name" },
+  { accessorKey: "age", header: "Age" },
+  { accessorKey: "gender", header: "Gender" },
+];
+
+interface ExampleDataTableProps extends WithDataTableProps {
+  // Additional Props if necessary
+}
+
+const ExampleDataTable: React.FC<ExampleDataTableProps> = ({
+  rowSelectionConfig,
+  drawerInfo,
+  setDrawerInfo,
+  clearingDrawer,
+  paginationConfig = { pagination: { pageIndex: 0, pageSize: 20 }, setPagination: () => {} },
+  sortingConfig = { sorting: [], setSorting: () => {} },
+}) => {
+  const [enableRowNumbering, setEnableRowNumbering] = useState(false);
+  const [enableExpanding, setEnableExpanding] = useState(false);
+  const [enableRowSelection, setEnableRowSelection] = useState(true);
+  const [enableColumnResizing, setEnableColumnResizing] = useState(true);
+  const [enableRowOrdering, setEnableRowOrdering] = useState(false);
+  const [enableColumnOrdering, setEnableColumnOrdering] = useState(false);
+  const [enableColumnActions, setEnableColumnActions] = useState(true);
+  const [enableClickToCopy, setEnableClickToCopy] = useState(true);
+
+  const [columns, setColumns] = useState<ColumnDefArray<User>>(createColumns(enableRowNumbering));
+
+  useEffect(() => {
+    setColumns(createColumns(enableRowNumbering));
+  }, [enableRowNumbering]);
 
   const [data, setData] = useState<PaginatedResponse<User> | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   // Fetch data from the API
-  const fetchData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(
-        `/api/table/users?limit=${paginationConfig?.pagination.pageSize}&offset=${
-          paginationConfig?.pagination.pageIndex * paginationConfig?.pagination.pageSize
-        }`
-      );
-      const result = await response.json();
-      setData(result);
-    } catch (err) {
-      setError(err as Error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `/api/table/users?limit=${paginationConfig?.pagination.pageSize}&offset=${
+            paginationConfig?.pagination.pageIndex * paginationConfig?.pagination.pageSize
+          }`
+        );
+        const result = await response.json();
+        setData(result);
+      } catch (err) {
+        setError(err as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchData();
-  }, [paginationConfig?.pagination, sortingConfig?.sorting, columns]);
+  }, [paginationConfig?.pagination, sortingConfig.sorting, columns]);
 
   const [columnVisibility, setColumnVisibility] = useState<{ [key: string]: boolean }>({ gender: false });
   const [showHidingColumnsModal, setShowHidingColumnsModal] = useState(false);

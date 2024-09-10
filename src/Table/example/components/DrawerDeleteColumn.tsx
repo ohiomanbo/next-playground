@@ -1,7 +1,9 @@
-import { User } from "@/app/api/table/users/route";
-import { Drawer } from "@/components/Drawer";
-import { ColumnDefArray } from "@/types/column.type";
 import React, { useState } from "react";
+import { User } from "@/app/api/table/users/route";
+
+import type { ColumnDefArray } from "@/types/column.type";
+
+import { Drawer } from "@/components/Drawer";
 
 interface DrawerActionProps {
   columns: ColumnDefArray<User>;
@@ -23,7 +25,7 @@ const DrawerDeleteColumn = ({ columns, drawerInfo, clearingDrawer, setColumns }:
   );
 
   const applyNewColumn = () => {
-    const newArr = willDeleteColumns.filter((ele) => !ele.willDelete).map(({ willDelete, ...rest }) => rest);
+    const newArr = willDeleteColumns.filter((ele) => !ele.willDelete).map(({ willDelete: _, ...rest }) => rest);
 
     setColumns(newArr);
     clearingDrawer();
@@ -41,7 +43,7 @@ const DrawerDeleteColumn = ({ columns, drawerInfo, clearingDrawer, setColumns }:
         <div style={{ display: "flex", flexFlow: "column", gap: "5px" }}>
           {willDeleteColumns
             .filter((ele) => !ele.willDelete)
-            .map((ele, index) => (
+            .map((ele) => (
               <div
                 key={`${ele.accessorKey}`}
                 style={{ display: "flex", flexFlow: "row", justifyContent: "space-between" }}
@@ -64,7 +66,7 @@ const DrawerDeleteColumn = ({ columns, drawerInfo, clearingDrawer, setColumns }:
           삭제 예정 columns
           {willDeleteColumns
             .filter((ele) => ele.willDelete)
-            .map((ele, index) => (
+            .map((ele) => (
               <div
                 key={`${ele.accessorKey}`}
                 style={{ display: "flex", flexFlow: "row", justifyContent: "space-between" }}

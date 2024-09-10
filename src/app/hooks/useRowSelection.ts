@@ -24,16 +24,16 @@ const useRowSelection = <T extends MRT_RowData>({
     return !!rowSelection[rowId];
   };
 
-  const defaultGetRowId = (row: T): string => {
-    if (row && typeof row === "object" && "idx" in row) {
-      const idx = (row as T & { idx: string | number }).idx;
-      return idx !== null ? idx.toString() : `row-${Math.random()}`;
-    }
-    return `row-${Math.random()}`;
-  };
-
   const resolveRowId = useCallback(
     (row: T): string => {
+      const defaultGetRowId = (row: T): string => {
+        if (row && typeof row === "object" && "idx" in row) {
+          const idx = (row as T & { idx: string | number }).idx;
+          return idx !== null ? idx.toString() : `row-${Math.random()}`;
+        }
+        return `row-${Math.random()}`;
+      };
+
       if (getRowId) {
         try {
           const id = getRowId(row);

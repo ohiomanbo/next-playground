@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import {
   MaterialReactTable,
@@ -8,23 +8,23 @@ import {
   type MRT_TableInstance,
   type MRT_SortingState,
   type MRT_RowData,
-  MRT_ColumnDef,
+  type MRT_ColumnDef,
 } from "material-react-table";
 import { ThemeProvider } from "@mui/material/styles";
 import { MRT_Localization_KO } from "material-react-table/locales/ko";
 import { Box, Checkbox, MenuItem } from "@mui/material";
+import { ContentCopy } from "@mui/icons-material";
 
 import EmptyTableBody from "@/Table/modulized/MaterialReactTable/defaultAtoms/Empty/EmptyTableBody";
 import FadeLoadingOverlay from "@/Table/modulized/MaterialReactTable/defaultAtoms/Loading/Loading";
 import { PaginationComponent } from "@/Table/modulized/MaterialReactTable/defaultAtoms/Pagination/PaginationComponent";
 import type { PaginatedDataTableProps } from "@/types/table.type";
+import useRowSelection from "@/app/hooks/useRowSelection";
+import useTableRef from "@/app/hooks/useTableRef";
 
 import { defaultTheme } from "@/Table/modulized/MaterialReactTable/mrtTheme";
 import { getTrueCount } from "@/utils/common.util";
 import { applyStyleFixedSizeCellForCount, applyStyleWidthHeightOverflow } from "@/utils/style.util";
-import useTableRef from "@/app/hooks/useTableRef";
-import useRowSelection from "@/app/hooks/useRowSelection";
-import { ContentCopy } from "@mui/icons-material";
 
 const PaginatedDataTable = <TData extends MRT_RowData>({
   dataResponse,
@@ -74,16 +74,16 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
     ...(columns.map((ele) => ele.accessorKey).filter((ele): ele is string => ele !== undefined) as string[]),
   ]);
 
-  const getColumnOrder = (cols: MRT_ColumnDef<TData>[]) => {
+  const getColumnOrder = useCallback((cols: MRT_ColumnDef<TData>[]) => {
     const defaultOrder = ["mrt-row-select", "mrt-row-expand", "rowIndex"];
     const accessorKeys = cols.map((col) => col.accessorKey || col.id).filter((key): key is string => key !== undefined);
     return [...defaultOrder, ...accessorKeys];
-  };
+  }, []);
 
   useEffect(() => {
     const newColumnOrder = getColumnOrder(columns);
     setColumnOrder(newColumnOrder);
-  }, [columns]);
+  }, [columns, getColumnOrder]);
 
   const [tableData, setTableData] = useState(() => data);
 
@@ -133,7 +133,7 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
     }),
 
     enableColumnActions,
-    renderColumnActionsMenuItems: ({ column, table, closeMenu, internalColumnMenuItems }) => [
+    renderColumnActionsMenuItems: ({ closeMenu, internalColumnMenuItems }) => [
       ...internalColumnMenuItems,
       <MenuItem
         key="custom-1"
@@ -253,11 +253,10 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
         setShowSortingModal(true);
         setSortingProps(props);
       } else {
-        sorting?.setState &&
-          sorting.setState((prevSorting) => {
-            const newSorting = typeof props === "function" ? props(prevSorting) : props;
-            return newSorting;
-          });
+        sorting.setState((prevSorting) => {
+          const newSorting = typeof props === "function" ? props(prevSorting) : props;
+          return newSorting;
+        });
       }
     },
 

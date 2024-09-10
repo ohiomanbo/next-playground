@@ -1,12 +1,14 @@
-import { User } from "@/app/api/table/users/route";
-import { Drawer } from "@/components/Drawer";
-import { Dropdown } from "@/components/Dropdown/Dropdown";
-import { NotionLikeToggle } from "@/components/Toggle/Toggle";
-import ToggleSwitchButton from "@/components/ToggleSwitch";
-import { CellProps, ColumnDefArray } from "@/types/column.type";
-import { ColumnType } from "@/types/filter.type";
-import { createColumn } from "@/utils/DataTableColumn.util";
 import React, { useCallback, useState } from "react";
+import { User } from "@/app/api/table/users/route";
+
+import { createColumn } from "@/utils/DataTableColumn.util";
+import type { CellProps, ColumnDefArray } from "@/types/column.type";
+import type { ColumnType } from "@/types/filter.type";
+
+import { Drawer } from "@/components/Drawer";
+import { NotionLikeToggle } from "@/components/Toggle/Toggle";
+import { Dropdown } from "@/components/Dropdown/Dropdown";
+import ToggleSwitchButton from "@/components/ToggleSwitch";
 
 const LabelSwitchToggle = ({
   label,
@@ -104,7 +106,7 @@ const DrawerAddColumn = ({ drawerInfo, clearingDrawer, setColumns }: DrawerActio
     setEnableColumnActions(true);
     setEnableClickToCopy(true);
     clearingDrawer();
-  }, []);
+  }, [clearingDrawer]);
 
   const appendNewColumn = () => {
     const newColumn = createColumn<User>({

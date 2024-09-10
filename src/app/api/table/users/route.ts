@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
   const offset = parseInt(searchParams.get("offset") || "0", 10);
   const sort = searchParams.get("sort") || "";
 
-  let sortedUsers = [...users];
+  const sortedUsers = [...users];
 
   // 정렬 처리
   if (sort) {

@@ -47,7 +47,7 @@ export const operatorSet = [
 /**
  * @property {string[]} OperatorAccessorKeySet - 필터 연산자의 접근자 키 배열
  */
-const OperatorAccessorKeySet = [...operatorSet.map((ele) => ele.accessorKey)] as const;
+export const OperatorAccessorKeySet = [...operatorSet.map((ele) => ele.accessorKey)] as const;
 
 /**
  * @typedef {Object} Operator

@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
-import CloseIcon from "@/../public/assets/icon/close_x.svg";
-import ChevronSingleIcon from "@/../public/assets/icon/chevron_single.svg";
 import styles from "./Drawer.module.css";
 
 type DrawerDirection = "left" | "right" | "top" | "bottom";

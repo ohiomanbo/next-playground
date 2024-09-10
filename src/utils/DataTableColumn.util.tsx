@@ -1,3 +1,4 @@
+import React from "react";
 import MultiLineEllipsis from "@/components/MultiLineEllipsis";
 import { CellProps, CellReplacerProps, CombinedColumnDef } from "@/types/column.type";
 import { MRT_Cell, MRT_Column, MRT_Row, MRT_RowData, MRT_TableInstance } from "material-react-table";
@@ -112,7 +113,7 @@ export const createColumn = <T extends MRT_RowData>({
     column: MRT_Column<T, unknown>;
     table: MRT_TableInstance<T>;
     renderedCellValue: React.ReactNode;
-    [key: string]: any;
+    [key: string]: unknown;
   }) => {
     let content: React.ReactNode;
 
