@@ -1,6 +1,6 @@
 import React from "react";
 import ExampleDataTable from "@/Table/example/DataTable/ExampleDataTable";
-import EditableDataTable from "@/Table/example/DataTable/EditableDataTable";
+import EditableDataTable from "@/Table/example/DataTable/EditableTable/EditableDataTable";
 import { MRT_ColumnDef, MRT_RowData } from "material-react-table";
 
 interface CustomColumnDef<TData extends MRT_RowData> extends MRT_ColumnDef<TData> {
