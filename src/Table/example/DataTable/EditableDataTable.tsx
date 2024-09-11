@@ -140,23 +140,10 @@ const EditableDataTable: React.FC<ExampleCustomEditableDataTableProps> = ({ init
     }));
   }, [columns, cellRenderer, headerRenderer]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        editingCell &&
-        isCustomEdit &&
-        customEditRef.current &&
-        !customEditRef.current.contains(event.target as Node)
-      ) {
-        handleCancelEdit();
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [editingCell, isCustomEdit, handleCancelEdit]);
+  const handleCellCopy = (cell: MRT_Cell<Person>) => {
+    navigator.clipboard.writeText(cell.getValue<string | number>() as string);
+    console.log("Copied to clipboard: ", cell.getValue());
+  };
 
   const tableOptions: MRT_TableOptions<Person> = useMemo(
     () => ({
@@ -170,6 +157,9 @@ const EditableDataTable: React.FC<ExampleCustomEditableDataTableProps> = ({ init
             setIsCustomEdit(true);
           }
         },
+        // onClick: () => {
+        //   handleCellCopy(cell); // 클릭 시 셀의 값을 클립보드로 복사
+        // },
       }),
     }),
     [memoizedColumns, tableData]
