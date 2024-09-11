@@ -1,7 +1,7 @@
 import React from "react";
-import ExampleDataTable from "@/Table/example/DataTable/ExampleDataTable";
-import EditableDataTable from "@/Table/example/DataTable/EditableTable/EditableDataTable";
 import { MRT_ColumnDef, MRT_RowData } from "material-react-table";
+import DataTable from "@/Table/example/DataTable";
+import EditableDataTable from "@/Table/example/DataTable/EditableTable/EditableDataTable";
 
 interface CustomColumnDef<TData extends MRT_RowData> extends MRT_ColumnDef<TData> {
   editable?: boolean;
@@ -34,10 +34,10 @@ const initialColumns: CustomColumnDef<Person>[] = [
 
 export default function Home() {
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
+    <div style={{ width: "100vw", height: "100vh", backgroundColor: "lightgray" }}>
       Home
-      <div style={{ width: "800px", height: "auto", backgroundColor: "white" }}>
-        <ExampleDataTable searchTerm="" />
+      <div style={{ width: "100%", height: "auto", backgroundColor: "lightgray" }}>
+        <DataTable searchTerm="" />
         <EditableDataTable initialColumns={initialColumns} />
       </div>
     </div>

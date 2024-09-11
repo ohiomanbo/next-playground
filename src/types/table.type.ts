@@ -161,20 +161,6 @@ export interface DataTableProps<TData extends MRT_RowData> extends DataTableStyl
    * @property {React.ComponentType<DetailPanelProps<TData>>} [detailPanelComponent] - 행이 확장되었을 때 표시할 상세 정보 컴포넌트입니다.
    */
   detailPanelComponent?: React.ComponentType<DetailPanelProps<TData>>;
-
-  tableStyle?: {
-    cellStyle: {
-      /**
-       * @property {string} [headCellPadding] - 헤더 셀의 패딩 값을 정의합니다.
-       */
-      headCellPadding?: string;
-
-      /**
-       * @property {string} [bodyCellPadding] - 바디 셀의 패딩 값을 정의합니다.
-       */
-      bodyCellPadding?: string;
-    };
-  };
 }
 
 /**

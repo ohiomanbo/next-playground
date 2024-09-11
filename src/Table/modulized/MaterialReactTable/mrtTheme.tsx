@@ -5,6 +5,36 @@ const defaultTheme: Theme = createTheme({
     fontFamily: "'Noto Sans KR', sans-serif",
   },
   components: {
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          padding: "0px", // Add padding inside the Popover
+          borderRadius: "10px", // Make the corners rounded
+          border: "1px solid gray", // Add a border to the Popover
+          overflow: "hidden !important",
+        },
+      },
+    },
+    MuiList: {
+      styleOverrides: {
+        root: {
+          padding: "0px", // Padding for the list items
+        },
+      },
+    },
+    MuiListItem: {
+      styleOverrides: {
+        root: {
+          "&.Mui-selected": {},
+          "&:hover": {},
+        },
+      },
+    },
+    MuiListItemIcon: {
+      styleOverrides: {
+        root: {},
+      },
+    },
     MuiPaper: {
       styleOverrides: {
         root: {
@@ -23,12 +53,17 @@ const defaultTheme: Theme = createTheme({
           display: "flex",
           flexDirection: "column",
           flex: 1,
+          borderCollapse: "separate",
+          borderSpacing: 0,
+          border: "1px solid black",
         },
       },
     },
     MuiTable: {
       styleOverrides: {
         root: {
+          borderCollapse: "separate",
+          borderSpacing: 0,
           "& .MuiTableCell-root .MuiTableCell-resizable": {
             "& .MuiTableCell-resizeHandle": {
               position: "absolute",
@@ -57,7 +92,7 @@ const defaultTheme: Theme = createTheme({
           width: "32px", // 아이콘 버튼의 너비
           height: "30px", // 아이콘 버튼의 높이
           fontSize: "160px", // 버튼의 기본 폰트 크기
-          color: "var(--Grey-G-10) !important",
+          color: "var(--Grey-G-10, #3f424a) !important",
         },
       },
     },
@@ -77,7 +112,7 @@ const defaultTheme: Theme = createTheme({
           "&.Mui-active": {
             marginLeft: "4px",
             width: "20px !important",
-            color: "var(--Grey-G-10)",
+            color: "var(--Grey-G-10, #3f424a)",
             opacity: "1",
 
             // 정렬된 상태에서 아이콘의 색상과 opacity를 설정
@@ -108,13 +143,16 @@ const defaultTheme: Theme = createTheme({
       styleOverrides: {
         root: {
           /** thead > tr */
-          backgroundColor: "var(--Grey-G-90) !important", // #fff 주입되어서 강제로 덮어씀
-
+          backgroundColor: "var(--Grey-G-90, #fff) !important", // #fff 주입되어서 강제로 덮어씀
           "&.MuiTableRow-root": {
             /** thead > tr, tbody > tr 에 영향을 미치는 구간*/
             minHeight: "30px",
             boxShadow: "none",
-
+            backgroundColor: "var(--Grey-G-90, #fff) !important", // #fff 주입되어서 강제로 덮어씀
+            borderBottom: "1px solid black", // 행 사이의 구분선
+            "&:last-child": {
+              borderBottom: "none", // 마지막 행의 아래쪽 테두리 제거
+            },
             "& td": {
               /** body td */
             },
@@ -129,12 +167,16 @@ const defaultTheme: Theme = createTheme({
           minWidth: "40px",
           minHeight: "14px",
           padding: "2px 0px 2px 4px !important", // resize line 맞추기 위해 우측 padding 제거
-          color: "var(--Grey-G-10)",
+          color: "var(--Grey-G-10, #3f424a)",
+          borderRight: "1px solid black", // 열 사이의 구분선
+          "&:last-child": {
+            borderRight: "none", // 마지막 열의 오른쪽 테두리 제거
+          },
         },
         head: {
           fontWeight: 700,
-          borderTop: "1px solid var(--Light-G-40)",
-          borderBottom: "1px solid var(--Semantic-D-60_L-40)",
+          borderTop: "1px solid var(--Light-G-40, #d0d0d7)",
+          borderBottom: "1px solid black",
 
           "&.MuiTableCell-head": {
             "& .Mui-TableHeadCell-Content": {
@@ -158,13 +200,13 @@ const defaultTheme: Theme = createTheme({
             },
             "&:hover": {
               "& .Mui-TableHeadCell-ResizeHandle-Divider": {
-                backgroundColor: "var(--Grey-G-40) !important",
+                backgroundColor: "var(--Grey-G-40,#d0d0d7) !important",
               },
             },
           },
         },
         body: {
-          borderBottom: "1px solid var(--Grey-G-60)",
+          borderBottom: "1px solid var(--Grey-G-60,#e8eaed)",
           fontSize: "14px",
           fontStyle: "normal",
           fontWeight: 400,
@@ -216,27 +258,27 @@ const defaultTheme: Theme = createTheme({
             opacity: 1,
           },
           "& .MuiTableRow-root.Mui-selected": {
-            backgroundColor: "var(--Semantic-D-60_L-80)",
+            backgroundColor: "var(--Semantic-D-60_L-80,#f4f4f6)",
             opacity: 1,
           },
           "& .MuiTableRow-root.Mui-selected td:hover": {
-            backgroundColor: "var(--Semantic-D-60_L-80)",
+            backgroundColor: "var(--Semantic-D-60_L-80,#f4f4f6)",
             opacity: 1,
           },
           "& .MuiTableRow-root.Mui-selected td:after": {
-            backgroundColor: "var(--Semantic-D-60_L-80)",
+            backgroundColor: "var(--Semantic-D-60_L-80,#f4f4f6)",
             opacity: 1,
           },
           "& .MuiTableRow-root td:after": {
-            backgroundColor: "var(--Grey-G-80) !important",
+            backgroundColor: "var(--Grey-G-80,#F4F4F6) !important",
             opacity: 1,
           },
           "& .MuiTableRow-root td:hover": {
-            // backgroundColor: "var(--Grey-G-80)",
+            // backgroundColor: "var(--Grey-G-80,#F4F4F6)",
             opacity: 1,
           },
           "& .MuiTableRow-root.Mui-selected.MuiTableRow-hover": {
-            // backgroundColor: "var(--Grey-G-80)",
+            // backgroundColor: "var(--Grey-G-80,#F4F4F6)",
             opacity: 1,
           },
         },

@@ -3,6 +3,21 @@ import MultiLineEllipsis from "@/components/MultiLineEllipsis";
 import { CellProps, CellReplacerProps, CombinedColumnDef } from "@/types/column.type";
 import { MRT_Cell, MRT_Column, MRT_Row, MRT_RowData, MRT_TableInstance } from "material-react-table";
 
+export const findMissingColumns = (
+  allColumns: { accessorKey: string; header: string }[],
+  columns: { accessorKey?: string }[]
+): Record<string, boolean> => {
+  const columnKeys = columns.map((col) => col.accessorKey);
+
+  return allColumns.reduce(
+    (acc, col) => {
+      acc[col.accessorKey] = columnKeys.includes(col.accessorKey);
+      return acc;
+    },
+    {} as Record<string, boolean>
+  );
+};
+
 /**
  * @description 셀의 값을 대체할 기본 로직을 처리합니다.
  * @param data 원시형 param

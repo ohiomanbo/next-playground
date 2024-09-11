@@ -76,6 +76,20 @@ export interface DataTableStyles {
    */
   mrtTableBodyStyles?: WidthHeightStyles & OverflowStyles;
 
+  mrtCellStyles?: {
+    cellStyle: {
+      /**
+       * @property {string} [headCellPadding] - 헤더 셀의 패딩 값을 정의합니다.
+       */
+      headCellPadding?: string;
+
+      /**
+       * @property {string} [bodyCellPadding] - 바디 셀의 패딩 값을 정의합니다.
+       */
+      bodyCellPadding?: string;
+    };
+  };
+
   /**
    * @property {string} [emptyHeight] - 데이터가 없을 때 표시할 빈 테이블의 높이
    */
