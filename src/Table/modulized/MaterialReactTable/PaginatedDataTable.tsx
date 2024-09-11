@@ -104,7 +104,7 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
 
   const table = useMaterialReactTable({
     localization: MRT_Localization_KO,
-    layoutMode: "grid",
+    layoutMode: "grid-no-grow",
     initialState: {
       density: "compact",
     },
@@ -221,7 +221,7 @@ const PaginatedDataTable = <TData extends MRT_RowData>({
 
     /** column resize */
     enableColumnResizing,
-    columnResizeMode: "onEnd",
+    columnResizeMode: "onChange",
 
     /** pagination */
     manualPagination: true,
